@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 
-def systema(y,t):
+def systema(y,t,b,c):
     theta,omega = y
-    dydt = [omega, 2.0 * np.sin(theta)]
+    dydt = [omega, b * c * np.sin(theta)]
     return dydt
 
 
@@ -55,8 +55,8 @@ class gantel(telo):
     def an(self,time):
         y0 = [self.ang,  self.asp]
         b = self.charge * 2.0 * self.field / (self.radius * self.radius * self.mass)
-        b = 1.0
-        return odeint(systema,y0,time)[:,0]
+        
+        return odeint(systema,y0,time, args =(b,1.0))[:,0]
         
     def getX(self, time):
         return self.ispeed_x * time + self.gforce/(2.0*self.mass)*time*time * np.sin(self.fa)
@@ -74,12 +74,12 @@ class gantel(telo):
         yp =  self.getY(time)+self.getYY(time)
         plotter.plot(xp, yp, self.color)
         xp =  self.getX(time)-self.getXX(time)
-        yp =  self.getY(time)+-self.getYY(time)
+        yp =  self.getY(time)-self.getYY(time)
         plotter.plot(xp, yp, self.color)
         
 plotter = pplotter()
 'telo1 = telo(1.0,1.0,3.0,1.0,'r',plotter)'
 
-telo2 = gantel(1.0,0.1,0.5,1.0,0.7,1.0,0.1,0.0,np.pi-0.5,0.5,'g',plotter)
+telo2 = gantel(1.0,0.1,0.5,1.0,0.7,1.0,1.0,0.0,np.pi-0.5,0.5,'g',plotter)
 telo2.position()
 telo2.position1()
